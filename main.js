@@ -13,6 +13,7 @@ function loadScript(url, callback) {
 
 function keyPush(key) {
     for (var i = 0; i < games.length; i++) {
+        key.preventDefault();
         games[i].keyPush(key);
     }
 }
@@ -35,9 +36,9 @@ function addSnakeGame(containerElement) {
 }
 
 //calback after main snake script loaded
+//starts all registered games
 function main() {
 
-    addSnakeGame(document.body);
     addSnakeGame(document.body);
 
     //register event listeners
@@ -51,4 +52,24 @@ function main() {
 //game is passed in the id of its canvas
 var games = [];
 
-document.onload = loadScript("snake.js", main);
+//set up page
+//set up buttons
+var addGameButton;
+var removeGameButton;
+
+
+window.onload = function () {
+    //setup buttons
+    addGameButton = document.getElementById("buttonAddGame");
+    addGameButton.onclick = function () {
+        addSnakeGame(document.body);
+    };
+
+    removeGameButton = document.getElementById("buttonRemoveGame");
+    removeGameButton.onclick = function () {
+        var game = games.pop();
+        game.gc.parentElement.removeChild(game.gc);
+    };
+
+    loadScript("snake.js", main);
+};

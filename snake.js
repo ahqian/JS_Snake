@@ -69,6 +69,14 @@ function Snake(canvasId, gameSettings) {
             return;
         }
 
+        //body collision check
+        for (var i = 0; i < sBody.length; i++) {
+            if (sBody[i].x == nx && sBody[i].y == ny) {
+                //collision
+                this.reset();
+            }
+        }
+
         //apples collision check
         var applesToAdd = 0;
         for (var i = 0; i < apples.length; i++) {
