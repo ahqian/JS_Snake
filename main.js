@@ -47,6 +47,7 @@ function keyPush(key) {
 function update() {
     var sBody = snake.body;
     var apples = snake.apples;
+    //new snake head position
     var nx = sBody[0].x + (snake.xv * snake.tileWidth);
     var ny = sBody[0].y + (snake.yv * snake.tileHeight);
     
@@ -73,16 +74,22 @@ function update() {
     //add new apples
     for (var i = 0; i < applesToAdd; i++) {
         //create new apple in different spot
+        //todo: find spot not currently filled by snake
         apples.push({
-                        x: Math.floor(Math.random() * snake.xtiles - 1) * snake.tileWidth,
-                        y: Math.floor(Math.random() * snake.ytiles - 1) * snake.tileHeight
+                        x: Math.floor(Math.random() * (snake.xtiles - 1)) * snake.tileWidth,
+                        y: Math.floor(Math.random() * (snake.ytiles - 1)) * snake.tileHeight
                     });
+        console.log("New apple x: " + apples[apples.length - 1].x
+                   + " y: " + apples[apples.length - 1].y);
     }
         
-    //move the snake forward without having to update the whole body
+    //move the snake forward
     var tail = sBody.pop();
     snake.clearx = tail.x;
     snake.cleary = tail.y;
+    
+    //depending on underlying data structure this could suck
+    //should ensure linked list structure with tail tracking
     sBody.unshift({x: nx, y: ny});
 }
 
