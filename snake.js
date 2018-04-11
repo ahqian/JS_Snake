@@ -9,7 +9,15 @@ function Snake(canvasId, gameSettings) {
     this.tileHeight = 25;
     this.xtiles = 16;
     this.ytiles = 16;
-    this.borderSize = 2;
+    this.borderSize = 1;
+    this.wrap = true;
+
+    this.bodyColour = "white";
+    this.bgColour = "black";
+    this.appleColour = "green";
+    this.deadFlashFrames = 2000 / (1000 / this.framerate);
+    this.deadFlashFrameCount = 0;
+    this.canMove = true;
 
     //graphics context
     this.gc = document.getElementById(canvasId);
@@ -32,7 +40,7 @@ function Snake(canvasId, gameSettings) {
     this.xv = 0; //x velocity
     this.yv = 0; //y velocity
     this.apples = [{
-        x: 5 * this.tileWidth,
+        x: 3 * this.tileWidth,
         y: 0
     }];
 
@@ -78,12 +86,14 @@ function Snake(canvasId, gameSettings) {
             y: 0
         }];
         this.apples = [{
-            x: 5 * this.tileWidth,
+            x: 3 * this.tileWidth,
             y: 0
         }];
 
         this.xv = 0; //x velocity
         this.yv = 0; //y velocity
+
+        this.canMove = true;
     }
 
     //update world for one elapsed game frame
@@ -96,15 +106,22 @@ function Snake(canvasId, gameSettings) {
 
         //out of bounds check
         if (nx >= this.width || nx < 0 || ny >= this.height || ny < 0) {
-            return; //pause
-            this.reset();
+            if (this.wrap) {
+                if (nx < 0) nx = this.width - this.tileWidth;
+                if (nx >= this.width) nx = 0;
+                if (ny < 0) ny = this.height - this.tileHeight;
+                if (ny >= this.height) ny = 0;
+            } else {
+                this.reset();
+            }
         }
 
         //body collision check
-        for (var i = 0; i < sBody.length; i++) {
+        for (var i = 0; i < sBody.length && (this.xv != 0 || this.yv != 0); i++) {
             if (sBody[i].x == nx && sBody[i].y == ny) {
                 //collision
-                this.reset();
+                this.deathSequence();
+                return;
             }
         }
 
@@ -151,7 +168,14 @@ function Snake(canvasId, gameSettings) {
 
     // TODO
     this.deathSequence = function () {
-
+        this.bodyColour = "red";
+        this.canMove = false;
+        this.deadFlashFrameCount++;
+        if (this.deadFlashFrameCount == this.deadFlashFrames) {
+            this.deadFlashFrameCount = 0;
+            this.bodyColour = "white";
+            this.reset();
+        }
     }
 
     //top level draw for whole game using given canvas
@@ -162,45 +186,45 @@ function Snake(canvasId, gameSettings) {
         var apples = this.apples;
 
         //draw background
-        ctx.fillStyle = "black";
+        ctx.fillStyle = this.bgColour;
         ctx.fillRect(0, 0, this.gc.width, this.gc.height);
 
         //draw apples
         for (var i = 0; i < apples.length; i++) {
-            ctx.fillStyle = "green";
+            ctx.fillStyle = this.appleColour;
             ctx.fillRect(apples[i].x, apples[i].y, this.tileWidth, this.tileHeight);
         }
 
         //draw snake
         for (var i = 0; i < sBody.length; i++) {
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.bgColour;
 
             //draw snake body border
             ctx.fillRect(sBody[i].x, sBody[i].y, this.tileWidth, this.tileHeight);
 
             //draw snake body
-            ctx.fillStyle = "white";
-            ctx.fillRect(sBody[i].x + bs, sBody[i].y + bs, this.tileWidth - bs, this.tileHeight - bs);
+            ctx.fillStyle = this.bodyColour;
+            ctx.fillRect(sBody[i].x + bs, sBody[i].y + bs, this.tileWidth - bs * 2, this.tileHeight - bs * 2);
         }
 
         //draw face (yes it's hacky..)
         if (this.xv == 1) { //facing right
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.bgColour;
             ctx.fillRect(sBody[0].x + this.tileWidth * 0.6, sBody[0].y + 1 / 3 * this.tileHeight,
                 this.tileWidth * 0.2, this.tileHeight * 0.1);
             ctx.fillRect(sBody[0].x + this.tileWidth * 0.6, sBody[0].y + 2 / 3 * this.tileHeight,
                 this.tileWidth * 0.2, -this.tileHeight * 0.1);
         } else if (this.xv == -1) { //facing left
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.bgColour;
             ctx.fillRect(sBody[0].x + this.tileWidth * 0.4, sBody[0].y + 1 / 3 * this.tileHeight, -this.tileWidth * 0.2, this.tileHeight * 0.1);
             ctx.fillRect(sBody[0].x + this.tileWidth * 0.4, sBody[0].y + 2 / 3 * this.tileHeight, -this.tileWidth * 0.2, -this.tileHeight * 0.1);
         } else if (this.yv == 1) { //facing down
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.bgColour;
             ctx.fillRect(sBody[0].x + 1 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.6,
                 this.tileWidth * 0.1, this.tileHeight * 0.2);
             ctx.fillRect(sBody[0].x + 2 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.6, this.tileWidth * -0.1, this.tileHeight * 0.2);
         } else if (this.yv == -1) { //facing down
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.bgColour;
             ctx.fillRect(sBody[0].x + 1 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.4,
                 this.tileWidth * 0.1, -this.tileHeight * 0.2);
             ctx.fillRect(sBody[0].x + 2 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.4, this.tileWidth * -0.1, -this.tileHeight * 0.2);
@@ -210,6 +234,8 @@ function Snake(canvasId, gameSettings) {
 
     //called by the outer keyDown event listener
     this.keyPush = function (key) {
+        if (!this.canMove) return;
+
         switch (key.keyCode) {
             case 37:
                 if (this.xv != 1) {

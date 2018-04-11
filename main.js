@@ -39,13 +39,7 @@ function addSnakeGame(containerElement, gameSettings) {
 //starts all registered games
 function main() {
     //create snake game with custom options
-    addSnakeGame(gamesDiv, {
-        framerate: 3,
-        xtiles: 16,
-        ytiles: 16,
-        width: 400,
-        height: 400
-    });
+    addSnakeGame(gamesDiv, snakeSettings);
 
     //register event listeners
     document.addEventListener("keydown", keyPush);
@@ -57,6 +51,7 @@ function main() {
 //game must have loop(timestamp) and keyPush(key) functions defined
 //game is passed in the id of its canvas
 var games = [];
+var snakeSettings;
 
 var gamesDiv;
 var addGameButton;
@@ -77,6 +72,16 @@ window.onload = function () {
     removeGameButton.onclick = function () {
         var game = games.pop();
         game.gc.parentElement.removeChild(game.gc);
+    };
+
+    //setup game settings
+    snakeSettings = {
+        framerate: 8,
+        xtiles: 16,
+        ytiles: 16,
+        width: 400,
+        height: 400,
+        wrap: true
     };
 
     loadScript("snake.js", main);
