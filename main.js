@@ -27,19 +27,25 @@ function loop(timestamp) {
 
 //create a Snake game canvas within the given containerElement
 //add it to the global games Array
-function addSnakeGame(containerElement) {
+function addSnakeGame(containerElement, gameSettings) {
     var canvas = document.createElement("canvas");
     canvas.setAttribute("id", "gc" + games.length);
     containerElement.appendChild(canvas);
-    var snake = new Snake("gc" + games.length);
+    var snake = new Snake("gc" + games.length, gameSettings);
     games.push(snake);
 }
 
 //calback after main snake script loaded
 //starts all registered games
 function main() {
-
-    addSnakeGame(document.body);
+    //create snake game with custom options
+    addSnakeGame(gamesDiv, {
+        framerate: 3,
+        xtiles: 16,
+        ytiles: 16,
+        width: 400,
+        height: 400
+    });
 
     //register event listeners
     document.addEventListener("keydown", keyPush);
@@ -52,17 +58,19 @@ function main() {
 //game is passed in the id of its canvas
 var games = [];
 
-//set up page
-//set up buttons
+var gamesDiv;
 var addGameButton;
 var removeGameButton;
 
 
 window.onload = function () {
+    //set up page
+    gamesDiv = document.getElementById("gamesDiv")
+
     //setup buttons
     addGameButton = document.getElementById("buttonAddGame");
     addGameButton.onclick = function () {
-        addSnakeGame(document.body);
+        addSnakeGame(gamesDiv);
     };
 
     removeGameButton = document.getElementById("buttonRemoveGame");

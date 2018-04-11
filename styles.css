@@ -2,3 +2,10 @@ canvas {
     border: grey 3px solid;
     background: black;
 }
+
+#gamesDiv {
+
+    width: auto;
+    margin: 1em auto;
+    /*padding-top: 1em;*/
+}

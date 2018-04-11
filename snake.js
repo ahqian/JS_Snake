@@ -3,8 +3,7 @@
 //game context
 function Snake(canvasId, gameSettings) {
 
-    this.snake = this;
-
+    //default settings
     this.framerate = 7;
     this.tileWidth = 25;
     this.tileHeight = 25;
@@ -25,7 +24,7 @@ function Snake(canvasId, gameSettings) {
     this.frameTime = 1000 / this.framerate;
     this.progress = 0;
 
-    //game objects
+    //default game objects
     this.body = [{
         x: 0,
         y: 0
@@ -36,6 +35,38 @@ function Snake(canvasId, gameSettings) {
         x: 5 * this.tileWidth,
         y: 0
     }];
+
+    this.updateSettings = function (settings) {
+        console.log("updating settings");
+        if (settings.hasOwnProperty("framerate")) {
+            this.framerate = settings.framerate;
+            this.frameTime = 1000 / this.framerate;
+        }
+
+        // settings xtiles or ytiles adjusts tilesize
+        if (settings.hasOwnProperty("xtiles")) {
+            this.xtiles = settings.xtiles;
+            this.tileWidth = this.width / this.xtiles;
+            this.gc.setAttribute("width", this.width);
+        }
+        if (settings.hasOwnProperty("ytiles")) {
+            this.ytiles = settings.ytiles;
+            this.tileHeight = this.height / this.ytiles;
+            this.gc.setAttribute("height", this.height);
+        }
+
+        // width and height properties will adjust tile size
+        if (settings.hasOwnProperty("width")) {
+            this.width = settings.width;
+            this.gc.setAttribute("width", this.width);
+            this.tileWidth = this.width / this.xtiles;
+        }
+        if (settings.hasOwnProperty("height")) {
+            this.height = settings.height;
+            this.gc.setAttribute("height", this.height);
+            this.tileHeight = this.height / this.ytiles;
+        }
+    }
 
     //game functions
     this.reset = function () {
@@ -66,7 +97,6 @@ function Snake(canvasId, gameSettings) {
         //out of bounds check
         if (nx >= this.width || nx < 0 || ny >= this.height || ny < 0) {
             this.reset();
-            return;
         }
 
         //body collision check
@@ -194,4 +224,8 @@ function Snake(canvasId, gameSettings) {
 
         this.lastRender = timestamp;
     }
+
+
+    //initialization code
+    if (gameSettings !== undefined) this.updateSettings(gameSettings);
 }
