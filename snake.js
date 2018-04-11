@@ -96,6 +96,7 @@ function Snake(canvasId, gameSettings) {
 
         //out of bounds check
         if (nx >= this.width || nx < 0 || ny >= this.height || ny < 0) {
+            return; //pause
             this.reset();
         }
 
@@ -148,6 +149,11 @@ function Snake(canvasId, gameSettings) {
         });
     }
 
+    // TODO
+    this.deathSequence = function () {
+
+    }
+
     //top level draw for whole game using given canvas
     this.draw = function () {
         var ctx = this.ctx;
@@ -176,6 +182,30 @@ function Snake(canvasId, gameSettings) {
             ctx.fillStyle = "white";
             ctx.fillRect(sBody[i].x + bs, sBody[i].y + bs, this.tileWidth - bs, this.tileHeight - bs);
         }
+
+        //draw face (yes it's hacky..)
+        if (this.xv == 1) { //facing right
+            ctx.fillStyle = "black";
+            ctx.fillRect(sBody[0].x + this.tileWidth * 0.6, sBody[0].y + 1 / 3 * this.tileHeight,
+                this.tileWidth * 0.2, this.tileHeight * 0.1);
+            ctx.fillRect(sBody[0].x + this.tileWidth * 0.6, sBody[0].y + 2 / 3 * this.tileHeight,
+                this.tileWidth * 0.2, -this.tileHeight * 0.1);
+        } else if (this.xv == -1) { //facing left
+            ctx.fillStyle = "black";
+            ctx.fillRect(sBody[0].x + this.tileWidth * 0.4, sBody[0].y + 1 / 3 * this.tileHeight, -this.tileWidth * 0.2, this.tileHeight * 0.1);
+            ctx.fillRect(sBody[0].x + this.tileWidth * 0.4, sBody[0].y + 2 / 3 * this.tileHeight, -this.tileWidth * 0.2, -this.tileHeight * 0.1);
+        } else if (this.yv == 1) { //facing down
+            ctx.fillStyle = "black";
+            ctx.fillRect(sBody[0].x + 1 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.6,
+                this.tileWidth * 0.1, this.tileHeight * 0.2);
+            ctx.fillRect(sBody[0].x + 2 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.6, this.tileWidth * -0.1, this.tileHeight * 0.2);
+        } else if (this.yv == -1) { //facing down
+            ctx.fillStyle = "black";
+            ctx.fillRect(sBody[0].x + 1 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.4,
+                this.tileWidth * 0.1, -this.tileHeight * 0.2);
+            ctx.fillRect(sBody[0].x + 2 / 3 * this.tileWidth, sBody[0].y + this.tileHeight * 0.4, this.tileWidth * -0.1, -this.tileHeight * 0.2);
+        }
+        //...
     }
 
     //called by the outer keyDown event listener
