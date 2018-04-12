@@ -13,10 +13,15 @@
 
 <body>
     <h1>A Simple Snake</h1>
-    <h3>Settings</h3>
+    <h3>Settings - Press R to reset</h3>
     <span>
         <button id="buttonAddGame">Add a Game</button>
         <button id="buttonRemoveGame">Remove a Game</button>
     </span>
+    <br>Wrap:
+    <input type="radio" name="radioWrap" value="true" checked="true" id="radioWrap1">True
+    <input type="radio" name="radioWrap" value="false">False
+    <br>Speed:
+    <input id="sliderSpeed" type="range" min="1" max="15" step="1" defaultValue="6">
     <div id="gamesDiv"></div>
 </body>

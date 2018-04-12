@@ -11,14 +11,27 @@ function loadScript(url, callback) {
     document.head.appendChild(script);
 }
 
+function getCurrentSettings() {
+    snakeSettings.wrap = radioWrap.checked;
+    snakeSettings.framerate = sliderSpeed.value;
+}
+
 function keyPush(key) {
+    if (key.keyCode == 82) {
+        getCurrentSettings();
+    }
+
     for (var i = 0; i < games.length; i++) {
         key.preventDefault();
         games[i].keyPush(key);
+        if (key.keyCode == 82) {
+            games[i].updateSettings(snakeSettings);
+        }
     }
 }
 
 function loop(timestamp) {
+    //game loop execution
     for (var i = 0; i < games.length; i++) {
         games[i].loop(timestamp);
     }
@@ -39,7 +52,7 @@ function addSnakeGame(containerElement, gameSettings) {
 //starts all registered games
 function main() {
     //create snake game with custom options
-    addSnakeGame(gamesDiv, snakeSettings);
+    //addSnakeGame(gamesDiv, snakeSettings);
 
     //register event listeners
     document.addEventListener("keydown", keyPush);
@@ -57,15 +70,20 @@ var gamesDiv;
 var addGameButton;
 var removeGameButton;
 
+var radioWrap;
+var sliderSpeed;
 
 window.onload = function () {
     //set up page
     gamesDiv = document.getElementById("gamesDiv")
+    radioWrap = document.getElementById("radioWrap1");
+    sliderSpeed = document.getElementById("sliderSpeed");
 
     //setup buttons
     addGameButton = document.getElementById("buttonAddGame");
     addGameButton.onclick = function () {
-        addSnakeGame(gamesDiv);
+        getCurrentSettings();
+        addSnakeGame(gamesDiv, snakeSettings);
     };
 
     removeGameButton = document.getElementById("buttonRemoveGame");

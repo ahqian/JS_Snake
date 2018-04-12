@@ -49,6 +49,11 @@ function Snake(canvasId, gameSettings) {
         if (settings.hasOwnProperty("framerate")) {
             this.framerate = settings.framerate;
             this.frameTime = 1000 / this.framerate;
+            this.deadFlashFrames = 2000 / (1000 / this.framerate);
+        }
+
+        if (settings.hasOwnProperty("wrap")) {
+            this.wrap = settings.wrap;
         }
 
         // settings xtiles or ytiles adjusts tilesize
@@ -74,6 +79,8 @@ function Snake(canvasId, gameSettings) {
             this.gc.setAttribute("height", this.height);
             this.tileHeight = this.height / this.ytiles;
         }
+
+        this.reset();
     }
 
     //game functions
@@ -112,7 +119,8 @@ function Snake(canvasId, gameSettings) {
                 if (ny < 0) ny = this.height - this.tileHeight;
                 if (ny >= this.height) ny = 0;
             } else {
-                this.reset();
+                this.deathSequence();
+                return;
             }
         }
 
